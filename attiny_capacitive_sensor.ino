@@ -9,6 +9,11 @@
 // led pin goes high when active, low when inactive
 #define LED_PIN 4
 
+#define DEBOUNCE_DELAY_ON 50
+#define DEBOUNCE_DELAY_OFF 25
+#define MAGIC_NUMBER 30
+#define THRESHOLD 75
+
 CapacitiveSensor cs = CapacitiveSensor(OUTPUT_PIN, INPUT_PIN);
 boolean last_state = 0;
 
@@ -21,22 +26,21 @@ void setup()
 
 void loop()                    
 {
-  int threshold = 75;
-  long total = cs.capacitiveSensor(30);
-  if (total > threshold) {
+  long total = cs.capacitiveSensor(MAGIC_NUMBER);
+  if (total > THRESHOLD) {
     if (last_state==0) {
       digitalWrite(SWITCH_PIN, LOW);
       pinMode(SWITCH_PIN, OUTPUT);
       digitalWrite(LED_PIN, HIGH);
       last_state = 1;
-      delay(50);
+      delay(DEBOUNCE_DELAY_ON);
     }
   } else {
     if (last_state==1) {
       pinMode(SWITCH_PIN, INPUT);
       digitalWrite(LED_PIN, LOW); 
       last_state = 0;
-      delay(50);
+      delay(DEBOUNCE_DELAY_OFF);
     }
   }
 }
